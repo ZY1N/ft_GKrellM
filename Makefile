@@ -2,7 +2,8 @@ NAME	:= ft_gkrellm
 CC		:= clang++
 FLAGS	:= -std=c++98 -Wall -Wextra -Werror
 
-FILES	:= *.cpp
+FILES	:= *.cpp \
+			modules/*.cpp
 OBJ		:= $(FILES:.cpp=.o)
 
 all		: $(NAME)
