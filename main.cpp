@@ -60,6 +60,9 @@ void	print_graph(int start, double bottom, double top)
 {
 	static std::vector<int> stalagmite;
 	static std::vector<int> stalactite;
+	start_color();
+	init_pair(1, COLOR_MAGENTA, COLOR_MAGENTA);
+	init_pair(2, COLOR_CYAN, COLOR_CYAN);
 
 	stalagmite.insert(stalagmite.begin(), round(bottom));
 	if (stalagmite.size() >= WIDTH - 2)
@@ -75,9 +78,17 @@ void	print_graph(int start, double bottom, double top)
 		for (int i = 1; i <= 10; ++i)
 		{
 			if (i <= stalagmite[jj])
+			{
+				wattron(g, COLOR_PAIR(1));
 				mvwprintw(g, 11 - i, 1 + jj, "*");
+				wattroff(g, COLOR_PAIR(1));
+			}
 			if (i <= stalactite[jj])
+			{
+				wattron(g, COLOR_PAIR(2));
 				mvwprintw(g, i, 1 + jj, "o");
+				wattroff(g, COLOR_PAIR(2));
+			}
 		}
 	}
 	wrefresh(g);
@@ -86,6 +97,8 @@ void	print_graph(int start, double bottom, double top)
 void	print_cpu_mod(int start, std::string topinfo)
 {
 	struct cpu_module cpu = get_cpu_module(topinfo);
+	init_pair(5, COLOR_MAGENTA, COLOR_BLACK);
+	init_pair(6, COLOR_CYAN, COLOR_BLACK);
 
 	WINDOW *w = newwin(18, WIDTH, start + 1, 2);
 	box(w, 0, 0);
@@ -93,14 +106,16 @@ void	print_cpu_mod(int start, std::string topinfo)
 	mvwprintw(w, 2, 1, ("   cores: " + std::to_string(cpu.cores)).c_str());
 
 	mvwprintw(w, 4, 1, ("\t~activity~"));
+	wattron(w, COLOR_PAIR(5));
 	mvwprintw(w, 4, 25, ("user: " + cpu.user + "%").c_str());
+	wattroff(w, COLOR_PAIR(5));
+	wattron(w, COLOR_PAIR(6));
 	mvwprintw(w, 3, 25, (" sys: " + cpu.sys + "%").c_str());
-//	mvwprintw(w, 6, 25, ("idle: " + std::to_string(cpu.idle) + " %").c_str());
+	wattroff(w, COLOR_PAIR(6));
 
 	wrefresh(w);
 
 	print_graph(start + 6, std::stod(cpu.user) / 10, std::stod(cpu.sys) / 10);
-//	print_graph(start + 6, 50 / 10, 50 / 10);
 }
 
 void	print_network_mod(int start, std::string topinfo)
@@ -109,7 +124,6 @@ void	print_network_mod(int start, std::string topinfo)
 
 	WINDOW *w = newwin(4, WIDTH, start, 2);
 	box(w, 0, 0);
-
 	mvwprintw(w, 1, 1, ("in: " + network.in).c_str());
 	mvwprintw(w, 2, 1, ("out: " + network.out).c_str());
 
@@ -122,33 +136,33 @@ void	print_ram_mod(int start, std::string topinfo)
 
 	WINDOW *w = newwin(4, WIDTH, start, 2);
 	box(w, 0, 0);
-
 	mvwprintw(w, 1, 1, ("  used: " + std::to_string(ram.phys_mem_used)).c_str());
 	mvwprintw(w, 2, 1, ("unused: " + std::to_string(ram.phys_mem_unused)).c_str());
-	//mvwprintw(w, start + 2, 25, ("PhysMem ratio: " + PCT(ram.ratio)).c_str());
 
 	wrefresh(w);
 }
 
 int main(void)
 {
-
 	//inits the screen
 	initscr();
+	start_color();
 	curs_set(0);
+	init_pair(4, COLOR_RED, COLOR_BLACK);
 
-	//colors
-//	start_color();
-//	init_pair(1, COLOR_RED, COLOR_BLACK);
-
-	mvprintw(1, 25, "FT_GKRELLM");
+	attron(A_BOLD);	
+	mvprintw(1, 22, "FT_GKRELLM");
+	attroff(A_BOLD);
 	refresh();
 
+	init_pair(3, COLOR_BLUE, COLOR_BLACK);
 	//make window (nlines, columns, ybegin, xbegin)
-	WINDOW *mainw = newwin(44, WIDTH + 2, 5, 1);
-	box(mainw, 0, 0);
+	WINDOW *mainw = newwin(44, WIDTH + 2, 3, 1);
 
-//	Graph test(100);
+	wattron(mainw, COLOR_PAIR(3));	
+	box(mainw, 0, 0);
+	wattroff(mainw, COLOR_PAIR(3));
+
 	while(1)
 	{
 		std::string topinfo = get_command_info("top -l 1 -n 0");
