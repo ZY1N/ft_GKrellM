@@ -10,4 +10,24 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#ifndef GRAPH_H
+#define GRAPH_H
+#include <iostream>
 
+class Graph
+{
+    public:
+        Graph(int calibration);
+        ~Graph();
+        Graph(const Graph &obj);
+        Graph &operator=(const Graph &obj);
+        //have setpoint also move position
+        void setpoint(double d);
+        void moveposition();
+        std::string reveal();
+    private:
+        char _graphshow[10][25];
+        int calibration;
+};
+
+#endif
