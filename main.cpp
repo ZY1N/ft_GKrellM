@@ -17,7 +17,8 @@
 #include <sys/sysctl.h>
 #include <curses.h>
 #include <stdlib.h>
-#include <iomanip>
+#include <vector>
+#include <math.h>
 #include "structs.hpp"
 
 #define WIDTH 45
@@ -35,7 +36,6 @@ void	print_os_mod(int start)
 	mvwprintw(w, 4, 1, ("       kernel release: " + os.release).c_str());
 	mvwprintw(w, 5, 1, ("machine hardware name: " + os.machine).c_str());
 	mvwprintw(w, 6, 1, ("       processor type: " + os.processor).c_str());
-
 	mvwprintw(w, 7, 1, ("         product name: " + os.p_name).c_str());
 	mvwprintw(w, 8, 1, ("      product version: " + os.p_version).c_str());
 	mvwprintw(w, 9, 1, ("        build version: " + os.b_version).c_str());
@@ -56,21 +56,44 @@ void	print_time_mod(int start)
 	wrefresh(w);
 }
 
+void	print_graph(int start, double percentage)
+{
+	static std::vector<int> vec;
+
+	vec.insert(vec.begin(), round(percentage));
+	if (vec.size() >= WIDTH - 2)
+		vec.pop_back();
+
+	WINDOW *g = newwin(10 + 2, WIDTH - 2, start, 3);
+	box(g, 0, 0);
+	for (int jj = 0; jj + 1 < (int)vec.size(); ++jj)
+	{
+		for (int i = 1; i <= 10; ++i)
+		{
+			if (i <= vec[jj])
+				mvwprintw(g, 11 - i, 1 + jj, "*");
+		}
+	}
+	wrefresh(g);
+}
+
 void	print_cpu_mod(int start, std::string topinfo)
 {
 	struct cpu_module cpu = get_cpu_module(topinfo);
 
-	WINDOW *w = newwin(8, WIDTH, start + 1, 2);
+	WINDOW *w = newwin(18, WIDTH, start + 1, 2);
 	box(w, 0, 0);
 	mvwprintw(w, 1, 1, ("   model: " + cpu.model).c_str());
 	mvwprintw(w, 2, 1, ("   cores: " + std::to_string(cpu.cores)).c_str());
-	mvwprintw(w, 3, 1, ("activity: "));
+	mvwprintw(w, 3, 1, ("\t~activity~"));
 
 	mvwprintw(w, 4, 25, ("user: " + std::to_string(cpu.user) + " %").c_str());
 	mvwprintw(w, 5, 25, (" sys: " + std::to_string(cpu.sys ) + " %").c_str());
-	mvwprintw(w, 6, 25, ("idle: " + std::to_string(cpu.idle) + " %").c_str());
+//	mvwprintw(w, 6, 25, ("idle: " + std::to_string(cpu.idle) + " %").c_str());
 
 	wrefresh(w);
+
+	print_graph(start + 6, cpu.user / 10);
 }
 
 void	print_network_mod(int start, std::string topinfo)
@@ -115,9 +138,10 @@ int main(void)
 	refresh();
 
 	//make window (nlines, columns, ybegin, xbegin)
-	WINDOW *mainw = newwin(40, WIDTH + 2, 5, 1);
+	WINDOW *mainw = newwin(44, WIDTH + 2, 5, 1);
 	box(mainw, 0, 0);
 
+//	Graph test(100);
 	while(1)
 	{
 		std::string topinfo = get_command_info("top -l 1 -n 0");
@@ -125,9 +149,8 @@ int main(void)
 		print_time_mod(6);//	height: 4
 		print_os_mod(10);//	height: 7
 		print_cpu_mod(20, topinfo); //height 8
-		print_ram_mod(29, topinfo); // height 4
-		print_network_mod(33, topinfo); //height 4
-
+		print_ram_mod(39, topinfo); // height 4
+		print_network_mod(43, topinfo); //height 4
 
 		wrefresh(mainw);
 		sleep(1);
