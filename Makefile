@@ -1,19 +1,24 @@
-# **************************************************************************** #
-#                                                                              #
-#                                                         :::      ::::::::    #
-#    Makefile                                           :+:      :+:    :+:    #
-#                                                     +:+ +:+         +:+      #
-#    By: yinzhang <marvin@42.fr>                    +#+  +:+       +#+         #
-#                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2019/11/02 15:28:03 by yinzhang          #+#    #+#              #
-#    Updated: 2019/11/02 15:28:04 by yinzhang         ###   ########.fr        #
-#                                                                              #
-# **************************************************************************** #
+NAME	:= ft_gkrellm
+CC		:= clang++
+FLAGS	:= -std=c++98 -Wall -Wextra -Werror
 
-CC = Clang++
+FILES	:= *.cpp
+OBJ		:= $(FILES:.cpp=.o)
 
-make: *.cpp
-	$(CC) -Wall -Werror -Wextra *.cpp -lncurses -o ft_gkrellm
+all		: $(NAME)
 
-clean:
-	$(RM) ft_gkrellm 
+$(NAME)	: #$(OBJ)
+	$(CC) $(FLAGS) $(FILES) -lncurses -o $(NAME)
+
+#%.o: %.cpp
+#	$(CC) $(FLAGS) -c $< -o $@
+
+clean	:
+	rm -rf $(OBJ)
+
+fclean	: clean
+	rm -rf $(NAME)
+
+re		: fclean all
+
+.PHONY: all, clean, fclean, re
