@@ -24,6 +24,10 @@ struct os_module	get_os_module(void)
 	m.version = substr_between(get_command_info("uname -v"), "", "\n");
 	m.machine = substr_between(get_command_info("uname -m"), "", "\n");
 	m.processor = substr_between(get_command_info("uname -p"), "", "\n");
+
+	m.p_name = substr_between(get_command_info("sw_vers -productName"), "", "\n");
+	m.p_version = substr_between(get_command_info("sw_vers -productVersion"), "", "\n");
+	m.b_version = substr_between(get_command_info("sw_vers -buildVersion"), "", "\n");
 	return (m);
 }
 
@@ -45,9 +49,9 @@ struct cpu_module	get_cpu_module(std::string topinfo)
 //	std::cout << str << std::endl;
 	struct cpu_module m;
 
-	m.user = std::stod(substr_between(str, " ", " user")) / 100;
-	m.sys = std::stod(substr_between(str, "user, ", " sys")) / 100;
-	m.idle = std::stod(substr_between(str, "sys, ", " idle")) / 100;
+	m.user = std::stod(substr_between(str, " ", " user"));
+	m.sys = std::stod(substr_between(str, "user, ", " sys"));
+	m.idle = std::stod(substr_between(str, "sys, ", " idle"));
 
 	m.model = substr_between(//	"sysctl -n machdep.cpu.model"
 		get_command_info("sysctl -n machdep.cpu.brand_string"),

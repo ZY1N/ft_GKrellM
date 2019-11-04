@@ -16,6 +16,10 @@ struct os_module {
 	std::string	version;
 	std::string	machine;
 	std::string	processor;
+
+	std::string	p_name;
+	std::string	p_version;
+	std::string	b_version;
 };
 struct os_module	get_os_module(void);
 
