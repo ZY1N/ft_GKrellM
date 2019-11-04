@@ -31,17 +31,16 @@ int main(void)
 	//inits the screen
 	initscr();
 
-	mvprintw(1, 50, "FT_GKRELLM");
+	mvprintw(1, 25, "FT_GKRELLM");
 	refresh();
 
 	//make window (nlines, columns, ybegin, xbegin)
-	WINDOW *mainw = newwin(40, 100, 5, 1);
+	WINDOW *mainw = newwin(40, 50, 5, 1);
+	box(mainw, 0, 0);
 
 	while(1)
 	{
 		std::string topinfo = get_command_info("top -l 1 -n 0");
-		//modules
-		box(mainw, 0, 0);
 		mvwprintw(mainw, 1, 1, nmod.getHost().c_str());
 		mvwprintw(mainw, 2, 1, nmod.getUser().c_str());
 		mvwprintw(mainw, 3, 1, omod.getProductName().c_str());
@@ -56,9 +55,11 @@ int main(void)
 		mvwprintw(mainw, 12, 1, ("model: " + cpu.model).c_str());
 		mvwprintw(mainw, 13, 1, ("cores: " + std::to_string(cpu.cores)).c_str());
 		mvwprintw(mainw, 14, 1, "activity: ");
-		//mvwprintw(mainw, 14, 25, ("\tuser: " + PCT(cpu.user)).c_str());
-		//mvwprintw(mainw, 15, 25, ("\tsys: " + PCT(cpu.sys)).c_str());
-		//mvwprintw(mainw, 16, 25, ("\tidle: " + PCT(cpu.idle)).c_str());
+
+
+		mvwprintw(mainw, 15, 1, ("user: " + std::to_string(cpu.user)).c_str());
+		mvwprintw(mainw, 15, 25, ("sys: " + std::to_string(cpu.sys)).c_str());
+		mvwprintw(mainw, 16, 25, ("idle: " + std::to_string(cpu.idle)).c_str());
 
 		mvwprintw(mainw, 17, 1, ("model: " + cpu.model).c_str());
 
