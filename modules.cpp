@@ -49,8 +49,8 @@ struct cpu_module	get_cpu_module(std::string topinfo)
 //	std::cout << str << std::endl;
 	struct cpu_module m;
 
-	m.user = std::stod(substr_between(str, " ", " user"));
-	m.sys = std::stod(substr_between(str, "user, ", " sys"));
+	m.user = substr_between(str, " ", " user");
+	m.sys = substr_between(str, "user, ", " sys");
 	m.idle = std::stod(substr_between(str, "sys, ", " idle"));
 
 	m.model = substr_between(//	"sysctl -n machdep.cpu.model"

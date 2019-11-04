@@ -35,8 +35,8 @@ struct cpu_module {
 	std::string	model;
 	int			clock_speed;
 	int			cores;
-	double	user;
-	double	sys;
+	std::string	user;
+	std::string	sys;
 	double	idle;
 };
 struct cpu_module	get_cpu_module(std::string topinfo);

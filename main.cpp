@@ -56,22 +56,28 @@ void	print_time_mod(int start)
 	wrefresh(w);
 }
 
-void	print_graph(int start, double percentage)
+void	print_graph(int start, double bottom, double top)
 {
-	static std::vector<int> vec;
+	static std::vector<int> stalagmite;
+	static std::vector<int> stalactite;
 
-	vec.insert(vec.begin(), round(percentage));
-	if (vec.size() >= WIDTH - 2)
-		vec.pop_back();
+	stalagmite.insert(stalagmite.begin(), round(bottom));
+	if (stalagmite.size() >= WIDTH - 2)
+		stalagmite.pop_back();
+	stalactite.insert(stalactite.begin(), round(top));
+	if (stalactite.size() >= WIDTH - 2)
+		stalactite.pop_back();
 
 	WINDOW *g = newwin(10 + 2, WIDTH - 2, start, 3);
 	box(g, 0, 0);
-	for (int jj = 0; jj + 1 < (int)vec.size(); ++jj)
+	for (int jj = 0; jj + 1 < (int)stalagmite.size(); ++jj)
 	{
 		for (int i = 1; i <= 10; ++i)
 		{
-			if (i <= vec[jj])
+			if (i <= stalagmite[jj])
 				mvwprintw(g, 11 - i, 1 + jj, "*");
+			if (i <= stalactite[jj])
+				mvwprintw(g, i, 1 + jj, "o");
 		}
 	}
 	wrefresh(g);
@@ -85,15 +91,16 @@ void	print_cpu_mod(int start, std::string topinfo)
 	box(w, 0, 0);
 	mvwprintw(w, 1, 1, ("   model: " + cpu.model).c_str());
 	mvwprintw(w, 2, 1, ("   cores: " + std::to_string(cpu.cores)).c_str());
-	mvwprintw(w, 3, 1, ("\t~activity~"));
 
-	mvwprintw(w, 4, 25, ("user: " + std::to_string(cpu.user) + " %").c_str());
-	mvwprintw(w, 5, 25, (" sys: " + std::to_string(cpu.sys ) + " %").c_str());
+	mvwprintw(w, 4, 1, ("\t~activity~"));
+	mvwprintw(w, 4, 25, ("user: " + cpu.user + "%").c_str());
+	mvwprintw(w, 3, 25, (" sys: " + cpu.sys + "%").c_str());
 //	mvwprintw(w, 6, 25, ("idle: " + std::to_string(cpu.idle) + " %").c_str());
 
 	wrefresh(w);
 
-	print_graph(start + 6, cpu.user / 10);
+	print_graph(start + 6, std::stod(cpu.user) / 10, std::stod(cpu.sys) / 10);
+//	print_graph(start + 6, 50 / 10, 50 / 10);
 }
 
 void	print_network_mod(int start, std::string topinfo)
